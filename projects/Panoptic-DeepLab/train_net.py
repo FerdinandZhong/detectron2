@@ -7,13 +7,14 @@ This script is a simplified version of the training script in detectron2/tools.
 """
 
 import os
+import json
 import torch
 
 import detectron2.data.transforms as T
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog, build_detection_train_loader
-from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
+from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch, BestCheckpointer
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
     CityscapesSemSegEvaluator,
@@ -25,9 +26,11 @@ from detectron2.projects.deeplab import build_lr_scheduler
 from detectron2.projects.panoptic_deeplab import (
     PanopticDeeplabDatasetMapper,
     add_panoptic_deeplab_config,
+    PSGEvaluator
 )
 from detectron2.solver import get_default_optimizer_params
 from detectron2.solver.build import maybe_add_gradient_clipping
+from detectron2.data import DatasetCatalog, MetadataCatalog
 
 
 def build_sem_seg_train_aug(cfg):
@@ -62,34 +65,27 @@ class Trainer(DefaultTrainer):
             return None
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        evaluator_list = []
-        evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
-        if evaluator_type in ["cityscapes_panoptic_seg", "coco_panoptic_seg"]:
-            evaluator_list.append(COCOPanopticEvaluator(dataset_name, output_folder))
-        if evaluator_type == "cityscapes_panoptic_seg":
-            evaluator_list.append(CityscapesSemSegEvaluator(dataset_name))
-            evaluator_list.append(CityscapesInstanceEvaluator(dataset_name))
-        if evaluator_type == "coco_panoptic_seg":
-            # `thing_classes` in COCO panoptic metadata includes both thing and
-            # stuff classes for visualization. COCOEvaluator requires metadata
-            # which only contains thing classes, thus we map the name of
-            # panoptic datasets to their corresponding instance datasets.
-            dataset_name_mapper = {
-                "coco_2017_val_panoptic": "coco_2017_val",
-                "coco_2017_val_100_panoptic": "coco_2017_val_100",
-            }
-            evaluator_list.append(
-                COCOEvaluator(dataset_name_mapper[dataset_name], output_dir=output_folder)
-            )
-        if len(evaluator_list) == 0:
-            raise NotImplementedError(
-                "no Evaluator for the dataset {} with the type {}".format(
-                    dataset_name, evaluator_type
-                )
-            )
-        elif len(evaluator_list) == 1:
-            return evaluator_list[0]
-        return DatasetEvaluators(evaluator_list)
+        # evaluator_list = []
+        # evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
+        # if evaluator_type in ["cityscapes_panoptic_seg", "coco_panoptic_seg"]:
+        #     evaluator_list.append(COCOPanopticEvaluator(dataset_name, output_folder))
+        # if evaluator_type == "cityscapes_panoptic_seg":
+        #     evaluator_list.append(CityscapesSemSegEvaluator(dataset_name))
+        #     evaluator_list.append(CityscapesInstanceEvaluator(dataset_name))
+        # if evaluator_type == "coco_panoptic_seg":
+        #     # `thing_classes` in COCO panoptic metadata includes both thing and
+        #     # stuff classes for visualization. COCOEvaluator requires metadata
+        #     # which only contains thing classes, thus we map the name of
+        #     # panoptic datasets to their corresponding instance datasets.
+        #     dataset_name_mapper = {
+        #         "coco_2017_val_panoptic": "coco_2017_val",
+        #         "coco_2017_val_100_panoptic": "coco_2017_val_100",
+        #     }
+        #     evaluator_list.append(
+        #         COCOEvaluator(dataset_name_mapper[dataset_name], output_dir=output_folder)
+        #     )
+
+        return PSGEvaluator(dataset_name, output_folder)
 
     @classmethod
     def build_train_loader(cls, cfg):
@@ -127,12 +123,86 @@ class Trainer(DefaultTrainer):
             return maybe_add_gradient_clipping(cfg, torch.optim.Adam)(params, cfg.SOLVER.BASE_LR)
         else:
             raise NotImplementedError(f"no optimizer type {optimizer_type}")
+    
+    def build_hooks(self):
+        ret = super().build_hooks()
+        cfg = self.cfg.clone()
+        ret.append(BestCheckpointer(cfg.TEST.EVAL_PERIOD,self.checkpointer, "relation_mean_recall/mean_recall"))
+        return ret
 
+def psg_train_dataset_function():
+    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+        advanced = json.load(file)
+    images_dict = {}
+
+    for sample in advanced["data"]:
+        sample["file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
+        sample["pan_seg_file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
+        sample["sem_seg_file_name"] = sample['pan_seg_file_name'].replace('panoptic', 'sem')
+        images_dict[sample["image_id"]] = sample
+    
+    train_ids = advanced["train_image_ids"]
+
+    train_data = []
+    for train_id in train_ids:
+        train_data.append(images_dict[train_id])
+    
+    return train_data
+
+def psg_val_dataset_function():
+    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+        advanced = json.load(file)
+    images_dict = {}
+
+    for sample in advanced["data"]:
+        sample["file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
+        sample["pan_seg_file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
+        sample["sem_seg_file_name"] = sample['pan_seg_file_name'].replace('panoptic', 'sem')
+        images_dict[sample["image_id"]] = sample
+    
+    val_ids = advanced["val_image_ids"]
+
+    val_data = []
+    for val_id in val_ids:
+        val_data.append(images_dict[val_id])
+    
+    return val_data
+
+def register_dataset():
+    DatasetCatalog.register("psg_train", psg_train_dataset_function)
+    DatasetCatalog.register("psg_val", psg_val_dataset_function)
+
+    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+        advanced = json.load(file)
+
+    all_classes = advanced["thing_classes"] + advanced["stuff_classes"]
+    
+    MetadataCatalog.get("psg_train").set(
+        thing_classes = all_classes,
+        stuff_classes = all_classes,
+        evaluator_type="coco_panoptic_seg",
+        ignore_label=255,
+        label_divisor=1000,
+        thing_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_train_panoptic").thing_dataset_id_to_contiguous_id
+    )
+
+    MetadataCatalog.get("psg_val").set(
+        thing_classes = all_classes,
+        stuff_classes = all_classes,
+        evaluator_type="coco_panoptic_seg",
+        ignore_label=255,
+        label_divisor=1000,
+        thing_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_val_panoptic").thing_dataset_id_to_contiguous_id,
+        stuff_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_val_panoptic").stuff_dataset_id_to_contiguous_id,
+        panoptic_json = "/root/Projects/openpsg/ce7454/data/psg/psg_val.json",
+        panoptic_root = "/root/Projects/openpsg/ce7454/data/coco"
+    )
 
 def setup(args):
     """
     Create configs and perform basic setups.
     """
+    register_dataset()
     cfg = get_cfg()
     add_panoptic_deeplab_config(cfg)
     cfg.merge_from_file(args.config_file)

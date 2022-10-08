@@ -8,3 +8,4 @@ from .panoptic_seg import (
     PanopticDeepLabSemSegHead,
     PanopticDeepLabInsEmbedHead,
 )
+from .evaluator import PSGEvaluator

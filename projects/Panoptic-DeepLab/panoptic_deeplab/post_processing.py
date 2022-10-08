@@ -4,7 +4,7 @@
 from collections import Counter
 import torch
 import torch.nn.functional as F
-
+import numpy as np
 
 def find_instance_center(center_heatmap, threshold=0.1, nms_kernel=3, top_k=None):
     """
@@ -232,3 +232,30 @@ def get_panoptic_segmentation(
     )
 
     return panoptic, center
+
+
+def compute_recall(prob, relation_targets, k=3):
+    pred_list, gt_list = [], []
+    pred = torch.topk(prob.data, k)[1]
+    pred = pred.cpu().detach().tolist()
+    pred_list.extend(pred)
+    for soft_label in relation_targets:
+        gt_label = (soft_label == 1).nonzero(as_tuple=True)[0]\
+                    .cpu().detach().tolist()
+        gt_list.append(gt_label)
+    
+    # compute mean recall
+    score_list = np.zeros([56, 2], dtype=int)
+    for gt, pred in zip(gt_list, pred_list):
+        for gt_id in gt:
+            # pos 0 for counting all existing relations
+            score_list[gt_id][0] += 1
+            if gt_id in pred:
+                # pos 1 for counting relations that is recalled
+                score_list[gt_id][1] += 1
+    score_list = score_list[6:]
+    # to avoid nan
+    score_list[:, 0][score_list[:, 0] == 0] = 1
+    meanrecall = np.mean(score_list[:, 1] / score_list[:, 0])
+
+    return meanrecall

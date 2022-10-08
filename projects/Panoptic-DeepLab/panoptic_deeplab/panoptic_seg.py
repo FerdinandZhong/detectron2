@@ -8,7 +8,7 @@ from torch.nn import functional as F
 
 from detectron2.config import configurable
 from detectron2.data import MetadataCatalog
-from detectron2.layers import Conv2d, DepthwiseSeparableConv2d, ShapeSpec, get_norm
+from detectron2.layers import Conv2d, DepthwiseSeparableConv2d, ShapeSpec, get_norm, Linear
 from detectron2.modeling import (
     META_ARCH_REGISTRY,
     SEM_SEG_HEADS_REGISTRY,
@@ -32,6 +32,11 @@ Registry for instance embedding branches, which make instance embedding
 predictions from feature maps.
 """
 
+# PANOPTIC_RELATIONS_REGISTRY = Registry("PANOPTIC_RELATIONS")
+# PANOPTIC_RELATIONS_REGISTRY.__doc__ = """
+# Registry for panoptic relations.
+# """
+
 
 @META_ARCH_REGISTRY.register()
 class PanopticDeepLab(nn.Module):
@@ -44,6 +49,7 @@ class PanopticDeepLab(nn.Module):
         self.backbone = build_backbone(cfg)
         self.sem_seg_head = build_sem_seg_head(cfg, self.backbone.output_shape())
         self.ins_embed_head = build_ins_embed_branch(cfg, self.backbone.output_shape())
+        # self.panoptic_relations_head = build_panoptic_relations_head(cfg, self.backbone.output_shape)
         self.register_buffer("pixel_mean", torch.tensor(cfg.MODEL.PIXEL_MEAN).view(-1, 1, 1), False)
         self.register_buffer("pixel_std", torch.tensor(cfg.MODEL.PIXEL_STD).view(-1, 1, 1), False)
         self.meta = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
@@ -51,8 +57,10 @@ class PanopticDeepLab(nn.Module):
         self.threshold = cfg.MODEL.PANOPTIC_DEEPLAB.CENTER_THRESHOLD
         self.nms_kernel = cfg.MODEL.PANOPTIC_DEEPLAB.NMS_KERNEL
         self.top_k = cfg.MODEL.PANOPTIC_DEEPLAB.TOP_K_INSTANCE
-        self.predict_instances = cfg.MODEL.PANOPTIC_DEEPLAB.PREDICT_INSTANCES
+        # self.predict_instances = cfg.MODEL.PANOPTIC_DEEPLAB.PREDICT_INSTANCES
+        self.predict_instances = True
         self.use_depthwise_separable_conv = cfg.MODEL.PANOPTIC_DEEPLAB.USE_DEPTHWISE_SEPARABLE_CONV
+        self.relation_classes = 56
         assert (
             cfg.MODEL.SEM_SEG_HEAD.USE_DEPTHWISE_SEPARABLE_CONV
             == cfg.MODEL.PANOPTIC_DEEPLAB.USE_DEPTHWISE_SEPARABLE_CONV
@@ -114,8 +122,23 @@ class PanopticDeepLab(nn.Module):
         else:
             targets = None
             weights = None
-        sem_seg_results, sem_seg_losses = self.sem_seg_head(features, targets, weights)
+        
+        relation_list = []
+        if "relations" in batched_inputs[0]:
+            for x in batched_inputs:
+                soft_label = torch.Tensor(self.relation_classes).fill_(0)
+                soft_label.fill_(0)
+                relations = [int(relation[-1]) for relation in x["relations"] if int(relation[-1])>5]
+                soft_label[relations] = 1
+                relation_list.append(soft_label)
+            relations_targets = torch.stack(relation_list).to(self.device) 
+        else:
+            relations_targets = None
+        sem_seg_results, panoptic_relations_results, sem_seg_losses, panoptic_relations_losses = self.sem_seg_head(
+            features, targets, relations_targets, weights)
+
         losses.update(sem_seg_losses)
+        losses.update(panoptic_relations_losses)
 
         if "center" in batched_inputs[0] and "offset" in batched_inputs[0]:
             center_targets = [x["center"].to(self.device) for x in batched_inputs]
@@ -149,11 +172,11 @@ class PanopticDeepLab(nn.Module):
             return []
 
         processed_results = []
-        for sem_seg_result, center_result, offset_result, input_per_image, image_size in zip(
-            sem_seg_results, center_results, offset_results, batched_inputs, images.image_sizes
+        for sem_seg_result, center_result, offset_result, panoptic_relations_result, input_per_image, image_size in zip(
+            sem_seg_results, center_results, offset_results, panoptic_relations_results, batched_inputs, images.image_sizes
         ):
-            height = input_per_image.get("height")
-            width = input_per_image.get("width")
+            height = input_per_image.get("height", image_size[0])
+            width = input_per_image.get("width", image_size[1])
             r = sem_seg_postprocess(sem_seg_result, image_size, height, width)
             c = sem_seg_postprocess(center_result, image_size, height, width)
             o = sem_seg_postprocess(offset_result, image_size, height, width)
@@ -174,6 +197,7 @@ class PanopticDeepLab(nn.Module):
             processed_results.append({"sem_seg": r})
             panoptic_image = panoptic_image.squeeze(0)
             semantic_prob = F.softmax(r, dim=0)
+            processed_results[-1]["panoptic_relations"] = panoptic_relations_result
             # For panoptic segmentation evaluation.
             processed_results[-1]["panoptic_seg"] = (panoptic_image, None)
             # For instance segmentation evaluation.
@@ -307,6 +331,9 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         self.predictor = Conv2d(head_channels, num_classes, kernel_size=1)
         nn.init.normal_(self.predictor.weight, 0, 0.001)
         nn.init.constant_(self.predictor.bias, 0)
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = Linear(head_channels, 56)
+        self.relation_loss = nn.BCEWithLogitsLoss(reduction="sum")
 
         if loss_type == "cross_entropy":
             self.loss = nn.CrossEntropyLoss(reduction="mean", ignore_index=ignore_value)
@@ -322,27 +349,33 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         ret["loss_top_k"] = cfg.MODEL.SEM_SEG_HEAD.LOSS_TOP_K
         return ret
 
-    def forward(self, features, targets=None, weights=None):
+    def forward(self, features, targets=None, relation_targets=None, weights=None):
         """
         Returns:
             In training, returns (None, dict of losses)
             In inference, returns (CxHxW logits, {})
         """
-        y = self.layers(features)
+        y, relations = self.layers(features)
         if self.training:
-            return None, self.losses(y, targets, weights)
+            return None, None, self.losses(y, targets, weights), self.relation_losses(relations, relation_targets)
         else:
             y = F.interpolate(
                 y, scale_factor=self.common_stride, mode="bilinear", align_corners=False
             )
-            return y, {}
+            return y, relations, {}, {}
 
     def layers(self, features):
         assert self.decoder_only
         y = super().layers(features)
         y = self.head(y)
+
+        relations = self.avg_pool(y)
+        relations = torch.flatten(relations, 1)
+        relations = self.fc(relations)
+
         y = self.predictor(y)
-        return y
+
+        return y, relations
 
     def losses(self, predictions, targets, weights=None):
         predictions = F.interpolate(
@@ -350,6 +383,11 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         )
         loss = self.loss(predictions, targets, weights)
         losses = {"loss_sem_seg": loss * self.loss_weight}
+        return losses
+
+    def relation_losses(self, relations, targets):
+        loss = self.relation_loss(relations, targets)
+        losses = {"loss_relation": loss}
         return losses
 
 
@@ -570,3 +608,117 @@ class PanopticDeepLabInsEmbedHead(DeepLabV3PlusHead):
             loss = loss.sum() * 0
         losses = {"loss_offset": loss * self.offset_loss_weight}
         return losses
+
+# def build_panoptic_relations_head(cfg, input_shape):
+#     """
+#     Build a instance embedding branch from `cfg.MODEL.INS_EMBED_HEAD.NAME`.
+#     """
+#     name = cfg.MODEL.PANOPTIC_RELATIONS_HEAD.NAME
+#     return PANOPTIC_RELATIONS_REGISTRY.get(name)(cfg, input_shape)
+
+# @PANOPTIC_RELATIONS_REGISTRY.register()
+# class PanopticRelationHead(DeepLabV3PlusHead):
+#     """
+#     Panoptic Relations
+#     """
+
+#     @configurable
+#     def __init__(
+#         self,
+#         input_shape: Dict[str, ShapeSpec],
+#         *,
+#         decoder_channels: List[int],
+#         norm: Union[str, Callable],
+#         head_channels: int,
+#         relation_classes: int,
+#         relation_loss_weight: float,
+#         **kwargs,
+#     ):
+#         """
+#         NOTE: this interface is experimental.
+
+#         Args:
+#             input_shape (ShapeSpec): shape of the input feature
+#             decoder_channels (list[int]): a list of output channels of each
+#                 decoder stage. It should have the same length as "input_shape"
+#                 (each element in "input_shape" corresponds to one decoder stage).
+#             norm (str or callable): normalization for all conv layers.
+#             head_channels (int): the output channels of extra convolutions
+#                 between decoder and predictor.
+#             relation_classes (int): num of relation classes.
+#             relation_loss_weight (float): loss weight for relation prediction
+#         """
+#         super().__init__(input_shape, decoder_channels=decoder_channels, norm=norm, **kwargs)
+#         assert self.decoder_only
+
+#         self.relation_loss_weight = relation_loss_weight
+#         use_bias = norm == ""
+#         # center prediction
+#         # `head` is additional transform before predictor
+#         self.relation_head = nn.Sequential(
+#             Conv2d(
+#                 decoder_channels[0],
+#                 decoder_channels[0],
+#                 kernel_size=3,
+#                 padding=1,
+#                 bias=use_bias,
+#                 norm=get_norm(norm, decoder_channels[0]),
+#                 activation=F.relu,
+#             ),
+#             Conv2d(
+#                 decoder_channels[0],
+#                 head_channels,
+#                 kernel_size=3,
+#                 padding=1,
+#                 bias=use_bias,
+#                 norm=get_norm(norm, head_channels),
+#                 activation=F.relu,
+#             ),
+#         )
+#         weight_init.c2_xavier_fill(self.center_head[0])
+#         weight_init.c2_xavier_fill(self.center_head[1])
+#         self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+#         self.fc = Linear(head_channels, relation_classes)
+        
+#         self.relation_loss = nn.BCEWithLogitsLoss(reduction="sum")
+
+#     @classmethod
+#     def from_config(cls, cfg, input_shape):
+#         ret = super().from_config(cfg, input_shape)
+#         ret["head_channels"] = cfg.MODEL.PANOPTIC_RELATIONS_HEAD.HEAD_CHANNELS
+#         ret["relation_classes"] = cfg.MODEL.PANOPTIC_RELATIONS_HEAD.RELATION_CLASSES
+#         return ret
+
+#     def forward(
+#         self,
+#         features,
+#         relation_targets=None,
+#     ):
+#         """
+#         Returns:
+#             In training, returns (None, dict of losses)
+#             In inference, returns (relation_classes logits, {})
+#         """
+#         x = self.layers(features)
+#         if self.training:
+#             return (
+#                 None,
+#                 self.relation_losses(x, relation_targets)
+#             )
+#         else:
+#             relations = x
+#             return relations, {}
+
+#     def layers(self, features):
+#         assert self.decoder_only
+#         y = super().layers(features)
+#         # center
+#         x = self.relation_head(y)
+#         x = self.avg_pool(x)
+#         x = self.fc(x)
+#         return x
+
+#     def relation_losses(self, predictions, targets):
+#         loss = self.relation_loss(predictions, targets)
+#         losses = {"loss_relation": loss * self.center_loss_weight}
+#         return losses
