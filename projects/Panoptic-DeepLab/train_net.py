@@ -14,7 +14,13 @@ import detectron2.data.transforms as T
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog, build_detection_train_loader
-from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch, BestCheckpointer
+from detectron2.engine import (
+    DefaultTrainer,
+    default_argument_parser,
+    default_setup,
+    launch,
+    BestCheckpointer,
+)
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
     CityscapesSemSegEvaluator,
@@ -26,17 +32,21 @@ from detectron2.projects.deeplab import build_lr_scheduler
 from detectron2.projects.panoptic_deeplab import (
     PanopticDeeplabDatasetMapper,
     add_panoptic_deeplab_config,
-    PSGEvaluator
+    PSGEvaluator,
 )
 from detectron2.solver import get_default_optimizer_params
 from detectron2.solver.build import maybe_add_gradient_clipping
 from detectron2.data import DatasetCatalog, MetadataCatalog
 
+torch.cuda.empty_cache()
+
 
 def build_sem_seg_train_aug(cfg):
     augs = [
         T.ResizeShortestEdge(
-            cfg.INPUT.MIN_SIZE_TRAIN, cfg.INPUT.MAX_SIZE_TRAIN, cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING
+            cfg.INPUT.MIN_SIZE_TRAIN,
+            cfg.INPUT.MAX_SIZE_TRAIN,
+            cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING,
         )
     ]
     if cfg.INPUT.CROP.ENABLED:
@@ -89,7 +99,9 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_train_loader(cls, cfg):
-        mapper = PanopticDeeplabDatasetMapper(cfg, augmentations=build_sem_seg_train_aug(cfg))
+        mapper = PanopticDeeplabDatasetMapper(
+            cfg, augmentations=build_sem_seg_train_aug(cfg)
+        )
         return build_detection_train_loader(cfg, mapper=mapper)
 
     @classmethod
@@ -120,83 +132,123 @@ class Trainer(DefaultTrainer):
                 nesterov=cfg.SOLVER.NESTEROV,
             )
         elif optimizer_type == "ADAM":
-            return maybe_add_gradient_clipping(cfg, torch.optim.Adam)(params, cfg.SOLVER.BASE_LR)
+            return maybe_add_gradient_clipping(cfg, torch.optim.Adam)(
+                params, cfg.SOLVER.BASE_LR
+            )
+        elif optimizer_type == "ADAMW":
+            return maybe_add_gradient_clipping(cfg, torch.optim.AdamW)(
+                params, cfg.SOLVER.BASE_LR, eps=1e-4
+            )
         else:
             raise NotImplementedError(f"no optimizer type {optimizer_type}")
-    
+
     def build_hooks(self):
         ret = super().build_hooks()
         cfg = self.cfg.clone()
-        ret.append(BestCheckpointer(cfg.TEST.EVAL_PERIOD,self.checkpointer, "relation_mean_recall/mean_recall"))
+        ret.append(
+            BestCheckpointer(
+                cfg.TEST.EVAL_PERIOD,
+                self.checkpointer,
+                "relation_mean_recall/mean_recall",
+            )
+        )
         return ret
 
+
 def psg_train_dataset_function():
-    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+    with open(
+        "/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r"
+    ) as file:
         advanced = json.load(file)
     images_dict = {}
 
     for sample in advanced["data"]:
-        sample["file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
-        sample["pan_seg_file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
-        sample["sem_seg_file_name"] = sample['pan_seg_file_name'].replace('panoptic', 'sem')
+        sample[
+            "file_name"
+        ] = f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
+        sample[
+            "pan_seg_file_name"
+        ] = f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
+        sample["sem_seg_file_name"] = sample["pan_seg_file_name"].replace(
+            "panoptic", "sem"
+        )
         images_dict[sample["image_id"]] = sample
-    
+
     train_ids = advanced["train_image_ids"]
 
     train_data = []
     for train_id in train_ids:
         train_data.append(images_dict[train_id])
-    
+
     return train_data
 
+
 def psg_val_dataset_function():
-    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+    with open(
+        "/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r"
+    ) as file:
         advanced = json.load(file)
     images_dict = {}
 
     for sample in advanced["data"]:
-        sample["file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
-        sample["pan_seg_file_name"]=f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
-        sample["sem_seg_file_name"] = sample['pan_seg_file_name'].replace('panoptic', 'sem')
+        sample[
+            "file_name"
+        ] = f"/root/Projects/openpsg/ce7454/data/coco/{sample['file_name']}"
+        sample[
+            "pan_seg_file_name"
+        ] = f"/root/Projects/openpsg/ce7454/data/coco/{sample['pan_seg_file_name']}"
+        sample["sem_seg_file_name"] = sample["pan_seg_file_name"].replace(
+            "panoptic", "sem"
+        )
         images_dict[sample["image_id"]] = sample
-    
+
     val_ids = advanced["val_image_ids"]
 
     val_data = []
     for val_id in val_ids:
         val_data.append(images_dict[val_id])
-    
+
     return val_data
+
 
 def register_dataset():
     DatasetCatalog.register("psg_train", psg_train_dataset_function)
     DatasetCatalog.register("psg_val", psg_val_dataset_function)
 
-    with open("/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r") as file:
+    with open(
+        "/root/Projects/openpsg/ce7454/data/psg/psg_cls_advanced.json", "r"
+    ) as file:
         advanced = json.load(file)
 
     all_classes = advanced["thing_classes"] + advanced["stuff_classes"]
-    
+
     MetadataCatalog.get("psg_train").set(
-        thing_classes = all_classes,
-        stuff_classes = all_classes,
+        thing_classes=all_classes,
+        stuff_classes=all_classes,
         evaluator_type="coco_panoptic_seg",
         ignore_label=255,
         label_divisor=1000,
-        thing_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_train_panoptic").thing_dataset_id_to_contiguous_id
+        thing_dataset_id_to_contiguous_id=MetadataCatalog.get(
+            "coco_2017_train_panoptic"
+        ).thing_dataset_id_to_contiguous_id,
     )
 
     MetadataCatalog.get("psg_val").set(
-        thing_classes = all_classes,
-        stuff_classes = all_classes,
+        thing_classes=all_classes,
+        stuff_classes=all_classes,
         evaluator_type="coco_panoptic_seg",
         ignore_label=255,
         label_divisor=1000,
-        thing_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_val_panoptic").thing_dataset_id_to_contiguous_id,
-        stuff_dataset_id_to_contiguous_id = MetadataCatalog.get("coco_2017_val_panoptic").stuff_dataset_id_to_contiguous_id,
-        panoptic_json = "/root/Projects/openpsg/ce7454/data/psg/psg_val.json",
-        panoptic_root = "/root/Projects/openpsg/ce7454/data/coco"
+        thing_dataset_id_to_contiguous_id=MetadataCatalog.get(
+            "coco_2017_val_panoptic"
+        ).thing_dataset_id_to_contiguous_id,
+        stuff_dataset_id_to_contiguous_id=MetadataCatalog.get(
+            "coco_2017_val_panoptic"
+        ).stuff_dataset_id_to_contiguous_id,
+        panoptic_json="/root/Projects/openpsg/ce7454/data/psg/psg_val.json",
+        panoptic_root="/root/Projects/openpsg/ce7454/data/coco",
     )
+
 
 def setup(args):
     """

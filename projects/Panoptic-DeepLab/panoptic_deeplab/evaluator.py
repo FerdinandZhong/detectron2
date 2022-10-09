@@ -87,7 +87,8 @@ class PSGEvaluator(DatasetEvaluator):
                         continue
                     pred_class = panoptic_label // label_divisor
                     isthing = (
-                        pred_class in self._metadata.thing_dataset_id_to_contiguous_id.values()
+                        pred_class
+                        in self._metadata.thing_dataset_id_to_contiguous_id.values()
                     )
                     segments_info.append(
                         {
@@ -110,7 +111,7 @@ class PSGEvaluator(DatasetEvaluator):
                         "file_name": file_name_png,
                         "png_string": out.getvalue(),
                         "segments_info": segments_info,
-                        "relations": relations
+                        "relations": relations,
                     }
                 )
 
@@ -162,17 +163,22 @@ class PSGEvaluator(DatasetEvaluator):
         res["SQ_st"] = 100 * pq_res["Stuff"]["sq"]
         res["RQ_st"] = 100 * pq_res["Stuff"]["rq"]
 
-        mean_recall = compute_recall(gt_json, PathManager.get_local_path(predictions_json))
-        results = OrderedDict({"panoptic_seg": res, "relation_mean_recall": mean_recall})
-        
+        mean_recall = compute_recall(
+            gt_json, PathManager.get_local_path(predictions_json)
+        )
+        results = OrderedDict(
+            {"panoptic_seg": res, "relation_mean_recall": mean_recall}
+        )
+
         _print_panoptic_results(pq_res)
 
         return results
 
+
 def compute_recall(gt_json_file, pred_json_file):
-    with open(gt_json_file, 'r') as f:
+    with open(gt_json_file, "r") as f:
         gt_json = json.load(f)
-    with open(pred_json_file, 'r') as f:
+    with open(pred_json_file, "r") as f:
         pred_json = json.load(f)
 
     print("Evaluation prediction recall:")
@@ -181,23 +187,29 @@ def compute_recall(gt_json_file, pred_json_file):
     print("Prediction:")
     print("\tJSON file: {}".format(pred_json_file))
 
-    pred_relations = {el['image_id']: el["relations"] for el in pred_json['annotations']}
+    pred_relations = {
+        el["image_id"]: el["relations"] for el in pred_json["annotations"]
+    }
     relations_matched_list = []
-    for gt_ann in gt_json['annotations']:
-        image_id = gt_ann['image_id']
+    for gt_ann in gt_json["annotations"]:
+        image_id = gt_ann["image_id"]
         if image_id not in pred_relations:
-            raise Exception('no prediction for the image with id: {}'.format(image_id))
-        gt_relation = [int(relation[-1]) for relation in gt_ann["relations"] if int(relation[-1])>5]
+            raise Exception("no prediction for the image with id: {}".format(image_id))
+        gt_relation = [
+            int(relation[-1])
+            for relation in gt_ann["relations"]
+            if int(relation[-1]) > 5
+        ]
         relations_matched_list.append((gt_relation, pred_relations[image_id]))
 
     score_list = np.zeros([56, 2], dtype=int)
     for gt, pred in relations_matched_list:
         for gt_id in gt:
-                # pos 0 for counting all existing relations
-                score_list[gt_id][0] += 1
-                if gt_id in pred:
-                    # pos 1 for counting relations that is recalled
-                    score_list[gt_id][1] += 1
+            # pos 0 for counting all existing relations
+            score_list[gt_id][0] += 1
+            if gt_id in pred:
+                # pos 1 for counting relations that is recalled
+                score_list[gt_id][1] += 1
 
     score_list = score_list[6:]
     # to avoid nan
@@ -205,7 +217,7 @@ def compute_recall(gt_json_file, pred_json_file):
     meanrecall = np.mean(score_list[:, 1] / score_list[:, 0])
 
     metrics = {}
-    metrics['mean_recall'] = meanrecall
+    metrics["mean_recall"] = meanrecall
 
     logger.info(f"Panoptic Relations Evaluation Results: {100* meanrecall}")
     return metrics
@@ -215,10 +227,19 @@ def _print_panoptic_results(pq_res):
     headers = ["", "PQ", "SQ", "RQ", "#categories"]
     data = []
     for name in ["All", "Things", "Stuff"]:
-        row = [name] + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq"]] + [pq_res[name]["n"]]
+        row = (
+            [name]
+            + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq"]]
+            + [pq_res[name]["n"]]
+        )
         data.append(row)
     table = tabulate(
-        data, headers=headers, tablefmt="pipe", floatfmt=".3f", stralign="center", numalign="center"
+        data,
+        headers=headers,
+        tablefmt="pipe",
+        floatfmt=".3f",
+        stralign="center",
+        numalign="center",
     )
     logger.info("Panoptic Evaluation Results:\n" + table)
 
@@ -240,6 +261,9 @@ if __name__ == "__main__":
 
     with contextlib.redirect_stdout(io.StringIO()):
         pq_res = pq_compute(
-            args.gt_json, args.pred_json, gt_folder=args.gt_dir, pred_folder=args.pred_dir
+            args.gt_json,
+            args.pred_json,
+            gt_folder=args.gt_dir,
+            pred_folder=args.pred_dir,
         )
         _print_panoptic_results(pq_res)

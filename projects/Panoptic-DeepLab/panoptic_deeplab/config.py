@@ -57,3 +57,13 @@ def add_panoptic_deeplab_config(cfg):
     cfg.MODEL.PANOPTIC_DEEPLAB.SIZE_DIVISIBILITY = -1
     # Only evaluates network speed (ignores post-processing).
     cfg.MODEL.PANOPTIC_DEEPLAB.BENCHMARK_NETWORK_SPEED = False
+
+    # for relations psg
+    cfg.MODEL.PSG_RELATION_NET = CN()
+    cfg.MODEL.PSG_RELATION_NET.NAME = "PSGRelationNet"
+    cfg.MODEL.PSG_RELATION_NET.IN_FEATURES = ["res2", "res3", "res5"]
+    cfg.MODEL.PSG_RELATION_NET.ENCODER_DEPTH = 2
+    cfg.MODEL.PSG_RELATION_NET.TOTAL_RELATIONS = 56
+    cfg.MODEL.PSG_RELATION_NET.TOTAL_CLASSES = 133
+    cfg.MODEL.PSG_RELATION_NET.LOSS_WEIGHT = 1.0
+    cfg.MODEL.PSG_RELATION_NET.CLS_LOSS_WEIGHT = 0.3

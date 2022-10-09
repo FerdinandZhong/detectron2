@@ -872,3 +872,224 @@ PanopticDeepLab(
 [10/08 15:16:46] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.135132 (0.078103 s / iter per device, on 2 devices)
 [10/08 15:16:46] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.047731 s / iter per device, on 2 devices)
 [10/08 15:17:18] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 15:38:30] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 15:38:30] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 15:38:30] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 15:38:30] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 15:38:48] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0026 s/iter. Inference: 0.0476 s/iter. Eval: 0.0229 s/iter. Total: 0.0731 s/iter. ETA=0:00:17
+[10/08 15:38:53] detectron2.evaluation.evaluator INFO: Inference done 81/250. Dataloading: 0.0014 s/iter. Inference: 0.0447 s/iter. Eval: 0.0256 s/iter. Total: 0.0717 s/iter. ETA=0:00:12
+[10/08 15:38:58] detectron2.evaluation.evaluator INFO: Inference done 148/250. Dataloading: 0.0014 s/iter. Inference: 0.0458 s/iter. Eval: 0.0261 s/iter. Total: 0.0734 s/iter. ETA=0:00:07
+[10/08 15:39:03] detectron2.evaluation.evaluator INFO: Inference done 213/250. Dataloading: 0.0014 s/iter. Inference: 0.0466 s/iter. Eval: 0.0266 s/iter. Total: 0.0747 s/iter. ETA=0:00:02
+[10/08 15:39:06] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:18.725136 (0.076429 s / iter per device, on 2 devices)
+[10/08 15:39:06] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.046014 s / iter per device, on 2 devices)
+[10/08 15:39:39] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 16:00:27] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 16:00:27] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 16:00:27] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 16:00:27] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 16:00:45] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0017 s/iter. Inference: 0.0525 s/iter. Eval: 0.0292 s/iter. Total: 0.0834 s/iter. ETA=0:00:19
+[10/08 16:00:50] detectron2.evaluation.evaluator INFO: Inference done 69/250. Dataloading: 0.0021 s/iter. Inference: 0.0561 s/iter. Eval: 0.0292 s/iter. Total: 0.0874 s/iter. ETA=0:00:15
+[10/08 16:00:55] detectron2.evaluation.evaluator INFO: Inference done 130/250. Dataloading: 0.0018 s/iter. Inference: 0.0541 s/iter. Eval: 0.0293 s/iter. Total: 0.0853 s/iter. ETA=0:00:10
+[10/08 16:01:00] detectron2.evaluation.evaluator INFO: Inference done 185/250. Dataloading: 0.0019 s/iter. Inference: 0.0559 s/iter. Eval: 0.0294 s/iter. Total: 0.0873 s/iter. ETA=0:00:05
+[10/08 16:01:06] detectron2.evaluation.evaluator INFO: Inference done 240/250. Dataloading: 0.0019 s/iter. Inference: 0.0569 s/iter. Eval: 0.0296 s/iter. Total: 0.0885 s/iter. ETA=0:00:00
+[10/08 16:01:07] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:22.434645 (0.091570 s / iter per device, on 2 devices)
+[10/08 16:01:07] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:13 (0.056864 s / iter per device, on 2 devices)
+[10/08 16:01:39] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 16:23:12] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 16:23:12] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 16:23:12] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 16:23:12] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 16:23:30] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0020 s/iter. Inference: 0.0469 s/iter. Eval: 0.0256 s/iter. Total: 0.0745 s/iter. ETA=0:00:17
+[10/08 16:23:36] detectron2.evaluation.evaluator INFO: Inference done 75/250. Dataloading: 0.0015 s/iter. Inference: 0.0497 s/iter. Eval: 0.0274 s/iter. Total: 0.0786 s/iter. ETA=0:00:13
+[10/08 16:23:41] detectron2.evaluation.evaluator INFO: Inference done 140/250. Dataloading: 0.0020 s/iter. Inference: 0.0492 s/iter. Eval: 0.0268 s/iter. Total: 0.0781 s/iter. ETA=0:00:08
+[10/08 16:23:46] detectron2.evaluation.evaluator INFO: Inference done 208/250. Dataloading: 0.0019 s/iter. Inference: 0.0480 s/iter. Eval: 0.0268 s/iter. Total: 0.0767 s/iter. ETA=0:00:03
+[10/08 16:23:49] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.409780 (0.079224 s / iter per device, on 2 devices)
+[10/08 16:23:49] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.047808 s / iter per device, on 2 devices)
+[10/08 16:24:21] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 16:45:32] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 16:45:32] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 16:45:32] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 16:45:32] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 16:45:50] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0031 s/iter. Inference: 0.0557 s/iter. Eval: 0.0249 s/iter. Total: 0.0838 s/iter. ETA=0:00:20
+[10/08 16:45:55] detectron2.evaluation.evaluator INFO: Inference done 74/250. Dataloading: 0.0017 s/iter. Inference: 0.0491 s/iter. Eval: 0.0289 s/iter. Total: 0.0798 s/iter. ETA=0:00:14
+[10/08 16:46:00] detectron2.evaluation.evaluator INFO: Inference done 139/250. Dataloading: 0.0017 s/iter. Inference: 0.0489 s/iter. Eval: 0.0283 s/iter. Total: 0.0789 s/iter. ETA=0:00:08
+[10/08 16:46:05] detectron2.evaluation.evaluator INFO: Inference done 208/250. Dataloading: 0.0016 s/iter. Inference: 0.0479 s/iter. Eval: 0.0273 s/iter. Total: 0.0769 s/iter. ETA=0:00:03
+[10/08 16:46:09] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.291484 (0.078741 s / iter per device, on 2 devices)
+[10/08 16:46:09] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.047483 s / iter per device, on 2 devices)
+[10/08 16:46:43] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 17:07:48] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 17:07:48] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 17:07:48] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 17:07:48] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 17:08:06] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0011 s/iter. Inference: 0.0490 s/iter. Eval: 0.0237 s/iter. Total: 0.0739 s/iter. ETA=0:00:17
+[10/08 17:08:11] detectron2.evaluation.evaluator INFO: Inference done 76/250. Dataloading: 0.0014 s/iter. Inference: 0.0473 s/iter. Eval: 0.0280 s/iter. Total: 0.0768 s/iter. ETA=0:00:13
+[10/08 17:08:16] detectron2.evaluation.evaluator INFO: Inference done 141/250. Dataloading: 0.0015 s/iter. Inference: 0.0485 s/iter. Eval: 0.0273 s/iter. Total: 0.0773 s/iter. ETA=0:00:08
+[10/08 17:08:21] detectron2.evaluation.evaluator INFO: Inference done 210/250. Dataloading: 0.0016 s/iter. Inference: 0.0474 s/iter. Eval: 0.0270 s/iter. Total: 0.0761 s/iter. ETA=0:00:03
+[10/08 17:08:24] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.188039 (0.078319 s / iter per device, on 2 devices)
+[10/08 17:08:24] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.047865 s / iter per device, on 2 devices)
+[10/08 17:08:57] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 17:30:06] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 17:30:06] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 17:30:06] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 17:30:06] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 17:30:23] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0028 s/iter. Inference: 0.0526 s/iter. Eval: 0.0244 s/iter. Total: 0.0798 s/iter. ETA=0:00:19
+[10/08 17:30:28] detectron2.evaluation.evaluator INFO: Inference done 75/250. Dataloading: 0.0015 s/iter. Inference: 0.0504 s/iter. Eval: 0.0264 s/iter. Total: 0.0784 s/iter. ETA=0:00:13
+[10/08 17:30:33] detectron2.evaluation.evaluator INFO: Inference done 141/250. Dataloading: 0.0015 s/iter. Inference: 0.0494 s/iter. Eval: 0.0266 s/iter. Total: 0.0775 s/iter. ETA=0:00:08
+[10/08 17:30:38] detectron2.evaluation.evaluator INFO: Inference done 211/250. Dataloading: 0.0016 s/iter. Inference: 0.0480 s/iter. Eval: 0.0262 s/iter. Total: 0.0759 s/iter. ETA=0:00:02
+[10/08 17:30:42] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:18.981004 (0.077473 s / iter per device, on 2 devices)
+[10/08 17:30:42] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.047265 s / iter per device, on 2 devices)
+[10/08 17:31:14] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 17:54:04] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 17:54:04] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 17:54:04] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 17:54:04] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 17:54:22] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0012 s/iter. Inference: 0.0551 s/iter. Eval: 0.0258 s/iter. Total: 0.0821 s/iter. ETA=0:00:19
+[10/08 17:54:27] detectron2.evaluation.evaluator INFO: Inference done 70/250. Dataloading: 0.0019 s/iter. Inference: 0.0549 s/iter. Eval: 0.0283 s/iter. Total: 0.0852 s/iter. ETA=0:00:15
+[10/08 17:54:32] detectron2.evaluation.evaluator INFO: Inference done 129/250. Dataloading: 0.0020 s/iter. Inference: 0.0543 s/iter. Eval: 0.0288 s/iter. Total: 0.0852 s/iter. ETA=0:00:10
+[10/08 17:54:37] detectron2.evaluation.evaluator INFO: Inference done 188/250. Dataloading: 0.0020 s/iter. Inference: 0.0542 s/iter. Eval: 0.0288 s/iter. Total: 0.0851 s/iter. ETA=0:00:05
+[10/08 17:54:42] detectron2.evaluation.evaluator INFO: Inference done 248/250. Dataloading: 0.0020 s/iter. Inference: 0.0539 s/iter. Eval: 0.0288 s/iter. Total: 0.0848 s/iter. ETA=0:00:00
+[10/08 17:54:43] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:21.456117 (0.087576 s / iter per device, on 2 devices)
+[10/08 17:54:43] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:13 (0.054036 s / iter per device, on 2 devices)
+[10/08 17:55:11] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 18:18:40] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 18:18:40] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 18:18:40] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 18:18:40] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 18:18:58] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0021 s/iter. Inference: 0.0626 s/iter. Eval: 0.0256 s/iter. Total: 0.0903 s/iter. ETA=0:00:21
+[10/08 18:19:03] detectron2.evaluation.evaluator INFO: Inference done 64/250. Dataloading: 0.0017 s/iter. Inference: 0.0626 s/iter. Eval: 0.0308 s/iter. Total: 0.0953 s/iter. ETA=0:00:17
+[10/08 18:19:08] detectron2.evaluation.evaluator INFO: Inference done 124/250. Dataloading: 0.0016 s/iter. Inference: 0.0581 s/iter. Eval: 0.0300 s/iter. Total: 0.0898 s/iter. ETA=0:00:11
+[10/08 18:19:13] detectron2.evaluation.evaluator INFO: Inference done 185/250. Dataloading: 0.0018 s/iter. Inference: 0.0564 s/iter. Eval: 0.0292 s/iter. Total: 0.0875 s/iter. ETA=0:00:05
+[10/08 18:19:18] detectron2.evaluation.evaluator INFO: Inference done 242/250. Dataloading: 0.0019 s/iter. Inference: 0.0563 s/iter. Eval: 0.0294 s/iter. Total: 0.0876 s/iter. ETA=0:00:00
+[10/08 18:19:20] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:22.240024 (0.090776 s / iter per device, on 2 devices)
+[10/08 18:19:20] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:13 (0.056577 s / iter per device, on 2 devices)
+[10/08 18:19:46] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 18:42:46] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 18:42:46] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 18:42:46] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 18:42:46] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 18:43:04] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0015 s/iter. Inference: 0.0578 s/iter. Eval: 0.0257 s/iter. Total: 0.0850 s/iter. ETA=0:00:20
+[10/08 18:43:09] detectron2.evaluation.evaluator INFO: Inference done 72/250. Dataloading: 0.0016 s/iter. Inference: 0.0522 s/iter. Eval: 0.0291 s/iter. Total: 0.0829 s/iter. ETA=0:00:14
+[10/08 18:43:14] detectron2.evaluation.evaluator INFO: Inference done 135/250. Dataloading: 0.0018 s/iter. Inference: 0.0517 s/iter. Eval: 0.0281 s/iter. Total: 0.0817 s/iter. ETA=0:00:09
+[10/08 18:43:19] detectron2.evaluation.evaluator INFO: Inference done 197/250. Dataloading: 0.0017 s/iter. Inference: 0.0515 s/iter. Eval: 0.0282 s/iter. Total: 0.0815 s/iter. ETA=0:00:04
+[10/08 18:43:24] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:20.530622 (0.083798 s / iter per device, on 2 devices)
+[10/08 18:43:24] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:12 (0.051167 s / iter per device, on 2 devices)
+[10/08 18:43:52] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 19:06:12] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 19:06:12] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 19:06:12] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 19:06:12] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 19:06:30] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0032 s/iter. Inference: 0.0535 s/iter. Eval: 0.0289 s/iter. Total: 0.0856 s/iter. ETA=0:00:20
+[10/08 19:06:35] detectron2.evaluation.evaluator INFO: Inference done 73/250. Dataloading: 0.0015 s/iter. Inference: 0.0524 s/iter. Eval: 0.0277 s/iter. Total: 0.0817 s/iter. ETA=0:00:14
+[10/08 19:06:40] detectron2.evaluation.evaluator INFO: Inference done 133/250. Dataloading: 0.0018 s/iter. Inference: 0.0531 s/iter. Eval: 0.0276 s/iter. Total: 0.0825 s/iter. ETA=0:00:09
+[10/08 19:06:45] detectron2.evaluation.evaluator INFO: Inference done 196/250. Dataloading: 0.0017 s/iter. Inference: 0.0521 s/iter. Eval: 0.0276 s/iter. Total: 0.0815 s/iter. ETA=0:00:04
+[10/08 19:06:50] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:20.317311 (0.082928 s / iter per device, on 2 devices)
+[10/08 19:06:50] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:12 (0.051282 s / iter per device, on 2 devices)
+[10/08 19:07:23] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 19:30:12] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 19:30:12] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 19:30:12] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 19:30:12] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 19:30:30] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0025 s/iter. Inference: 0.0666 s/iter. Eval: 0.0295 s/iter. Total: 0.0986 s/iter. ETA=0:00:23
+[10/08 19:30:35] detectron2.evaluation.evaluator INFO: Inference done 64/250. Dataloading: 0.0016 s/iter. Inference: 0.0642 s/iter. Eval: 0.0293 s/iter. Total: 0.0952 s/iter. ETA=0:00:17
+[10/08 19:30:40] detectron2.evaluation.evaluator INFO: Inference done 123/250. Dataloading: 0.0016 s/iter. Inference: 0.0590 s/iter. Eval: 0.0295 s/iter. Total: 0.0902 s/iter. ETA=0:00:11
+[10/08 19:30:45] detectron2.evaluation.evaluator INFO: Inference done 181/250. Dataloading: 0.0017 s/iter. Inference: 0.0579 s/iter. Eval: 0.0297 s/iter. Total: 0.0894 s/iter. ETA=0:00:06
+[10/08 19:30:50] detectron2.evaluation.evaluator INFO: Inference done 242/250. Dataloading: 0.0017 s/iter. Inference: 0.0567 s/iter. Eval: 0.0292 s/iter. Total: 0.0876 s/iter. ETA=0:00:00
+[10/08 19:30:51] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:21.990044 (0.089755 s / iter per device, on 2 devices)
+[10/08 19:30:51] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:13 (0.056581 s / iter per device, on 2 devices)
+[10/08 19:31:23] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 19:54:22] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 19:54:22] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 19:54:22] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 19:54:22] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 19:54:40] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0012 s/iter. Inference: 0.0440 s/iter. Eval: 0.0260 s/iter. Total: 0.0712 s/iter. ETA=0:00:17
+[10/08 19:54:45] detectron2.evaluation.evaluator INFO: Inference done 68/250. Dataloading: 0.0017 s/iter. Inference: 0.0555 s/iter. Eval: 0.0299 s/iter. Total: 0.0872 s/iter. ETA=0:00:15
+[10/08 19:54:50] detectron2.evaluation.evaluator INFO: Inference done 122/250. Dataloading: 0.0018 s/iter. Inference: 0.0570 s/iter. Eval: 0.0309 s/iter. Total: 0.0898 s/iter. ETA=0:00:11
+[10/08 19:54:55] detectron2.evaluation.evaluator INFO: Inference done 181/250. Dataloading: 0.0018 s/iter. Inference: 0.0566 s/iter. Eval: 0.0301 s/iter. Total: 0.0885 s/iter. ETA=0:00:06
+[10/08 19:55:00] detectron2.evaluation.evaluator INFO: Inference done 237/250. Dataloading: 0.0018 s/iter. Inference: 0.0570 s/iter. Eval: 0.0299 s/iter. Total: 0.0888 s/iter. ETA=0:00:01
+[10/08 19:55:02] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:22.367213 (0.091295 s / iter per device, on 2 devices)
+[10/08 19:55:02] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:14 (0.057278 s / iter per device, on 2 devices)
+[10/08 19:55:34] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 20:18:33] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 20:18:33] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 20:18:33] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 20:18:33] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 20:18:52] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0018 s/iter. Inference: 0.0518 s/iter. Eval: 0.0307 s/iter. Total: 0.0842 s/iter. ETA=0:00:20
+[10/08 20:18:57] detectron2.evaluation.evaluator INFO: Inference done 68/250. Dataloading: 0.0021 s/iter. Inference: 0.0561 s/iter. Eval: 0.0295 s/iter. Total: 0.0877 s/iter. ETA=0:00:15
+[10/08 20:19:02] detectron2.evaluation.evaluator INFO: Inference done 123/250. Dataloading: 0.0021 s/iter. Inference: 0.0576 s/iter. Eval: 0.0295 s/iter. Total: 0.0893 s/iter. ETA=0:00:11
+[10/08 20:19:07] detectron2.evaluation.evaluator INFO: Inference done 182/250. Dataloading: 0.0022 s/iter. Inference: 0.0568 s/iter. Eval: 0.0293 s/iter. Total: 0.0883 s/iter. ETA=0:00:06
+[10/08 20:19:12] detectron2.evaluation.evaluator INFO: Inference done 238/250. Dataloading: 0.0022 s/iter. Inference: 0.0574 s/iter. Eval: 0.0290 s/iter. Total: 0.0886 s/iter. ETA=0:00:01
+[10/08 20:19:14] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:22.120084 (0.090286 s / iter per device, on 2 devices)
+[10/08 20:19:14] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:13 (0.056934 s / iter per device, on 2 devices)
+[10/08 20:19:42] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 20:41:11] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 20:41:11] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 20:41:11] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 20:41:11] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 20:41:27] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0023 s/iter. Inference: 0.0439 s/iter. Eval: 0.0281 s/iter. Total: 0.0743 s/iter. ETA=0:00:17
+[10/08 20:41:32] detectron2.evaluation.evaluator INFO: Inference done 75/250. Dataloading: 0.0019 s/iter. Inference: 0.0478 s/iter. Eval: 0.0286 s/iter. Total: 0.0783 s/iter. ETA=0:00:13
+[10/08 20:41:37] detectron2.evaluation.evaluator INFO: Inference done 142/250. Dataloading: 0.0025 s/iter. Inference: 0.0464 s/iter. Eval: 0.0277 s/iter. Total: 0.0767 s/iter. ETA=0:00:08
+[10/08 20:41:42] detectron2.evaluation.evaluator INFO: Inference done 210/250. Dataloading: 0.0026 s/iter. Inference: 0.0453 s/iter. Eval: 0.0277 s/iter. Total: 0.0757 s/iter. ETA=0:00:03
+[10/08 20:41:45] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:18.971066 (0.077433 s / iter per device, on 2 devices)
+[10/08 20:41:45] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.045053 s / iter per device, on 2 devices)
+[10/08 20:42:14] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 21:03:25] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 21:03:25] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 21:03:25] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 21:03:25] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 21:03:42] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0023 s/iter. Inference: 0.0461 s/iter. Eval: 0.0262 s/iter. Total: 0.0746 s/iter. ETA=0:00:17
+[10/08 21:03:47] detectron2.evaluation.evaluator INFO: Inference done 78/250. Dataloading: 0.0014 s/iter. Inference: 0.0484 s/iter. Eval: 0.0256 s/iter. Total: 0.0755 s/iter. ETA=0:00:12
+[10/08 21:03:52] detectron2.evaluation.evaluator INFO: Inference done 143/250. Dataloading: 0.0018 s/iter. Inference: 0.0479 s/iter. Eval: 0.0267 s/iter. Total: 0.0765 s/iter. ETA=0:00:08
+[10/08 21:03:57] detectron2.evaluation.evaluator INFO: Inference done 211/250. Dataloading: 0.0019 s/iter. Inference: 0.0470 s/iter. Eval: 0.0270 s/iter. Total: 0.0759 s/iter. ETA=0:00:02
+[10/08 21:04:01] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.106243 (0.077985 s / iter per device, on 2 devices)
+[10/08 21:04:01] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.046698 s / iter per device, on 2 devices)
+[10/08 21:04:33] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 21:25:16] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 21:25:16] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 21:25:16] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 21:25:16] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 21:25:33] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0039 s/iter. Inference: 0.0438 s/iter. Eval: 0.0269 s/iter. Total: 0.0746 s/iter. ETA=0:00:17
+[10/08 21:25:38] detectron2.evaluation.evaluator INFO: Inference done 75/250. Dataloading: 0.0019 s/iter. Inference: 0.0465 s/iter. Eval: 0.0294 s/iter. Total: 0.0779 s/iter. ETA=0:00:13
+[10/08 21:25:43] detectron2.evaluation.evaluator INFO: Inference done 140/250. Dataloading: 0.0019 s/iter. Inference: 0.0468 s/iter. Eval: 0.0287 s/iter. Total: 0.0775 s/iter. ETA=0:00:08
+[10/08 21:25:48] detectron2.evaluation.evaluator INFO: Inference done 209/250. Dataloading: 0.0020 s/iter. Inference: 0.0456 s/iter. Eval: 0.0284 s/iter. Total: 0.0760 s/iter. ETA=0:00:03
+[10/08 21:25:51] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.149351 (0.078161 s / iter per device, on 2 devices)
+[10/08 21:25:51] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.045079 s / iter per device, on 2 devices)
+[10/08 21:26:19] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 21:47:04] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 21:47:04] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 21:47:04] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 21:47:04] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 21:47:23] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0025 s/iter. Inference: 0.0571 s/iter. Eval: 0.0260 s/iter. Total: 0.0856 s/iter. ETA=0:00:20
+[10/08 21:47:28] detectron2.evaluation.evaluator INFO: Inference done 70/250. Dataloading: 0.0026 s/iter. Inference: 0.0537 s/iter. Eval: 0.0287 s/iter. Total: 0.0851 s/iter. ETA=0:00:15
+[10/08 21:47:33] detectron2.evaluation.evaluator INFO: Inference done 129/250. Dataloading: 0.0028 s/iter. Inference: 0.0535 s/iter. Eval: 0.0290 s/iter. Total: 0.0854 s/iter. ETA=0:00:10
+[10/08 21:47:38] detectron2.evaluation.evaluator INFO: Inference done 193/250. Dataloading: 0.0027 s/iter. Inference: 0.0521 s/iter. Eval: 0.0283 s/iter. Total: 0.0831 s/iter. ETA=0:00:04
+[10/08 21:47:43] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:20.618865 (0.084159 s / iter per device, on 2 devices)
+[10/08 21:47:43] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:12 (0.050500 s / iter per device, on 2 devices)
+[10/08 21:48:18] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 22:08:58] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 22:08:58] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 22:08:58] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 22:08:58] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 22:09:14] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0019 s/iter. Inference: 0.0450 s/iter. Eval: 0.0335 s/iter. Total: 0.0804 s/iter. ETA=0:00:19
+[10/08 22:09:19] detectron2.evaluation.evaluator INFO: Inference done 73/250. Dataloading: 0.0014 s/iter. Inference: 0.0509 s/iter. Eval: 0.0284 s/iter. Total: 0.0807 s/iter. ETA=0:00:14
+[10/08 22:09:24] detectron2.evaluation.evaluator INFO: Inference done 141/250. Dataloading: 0.0014 s/iter. Inference: 0.0482 s/iter. Eval: 0.0280 s/iter. Total: 0.0776 s/iter. ETA=0:00:08
+[10/08 22:09:29] detectron2.evaluation.evaluator INFO: Inference done 210/250. Dataloading: 0.0014 s/iter. Inference: 0.0468 s/iter. Eval: 0.0276 s/iter. Total: 0.0759 s/iter. ETA=0:00:03
+[10/08 22:09:33] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.196061 (0.078351 s / iter per device, on 2 devices)
+[10/08 22:09:33] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.046866 s / iter per device, on 2 devices)
+[10/08 22:10:01] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 22:31:11] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 22:31:11] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 22:31:11] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 22:31:11] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 22:31:29] detectron2.evaluation.evaluator INFO: Inference done 11/250. Dataloading: 0.0021 s/iter. Inference: 0.0466 s/iter. Eval: 0.0276 s/iter. Total: 0.0764 s/iter. ETA=0:00:18
+[10/08 22:31:34] detectron2.evaluation.evaluator INFO: Inference done 76/250. Dataloading: 0.0014 s/iter. Inference: 0.0483 s/iter. Eval: 0.0275 s/iter. Total: 0.0773 s/iter. ETA=0:00:13
+[10/08 22:31:39] detectron2.evaluation.evaluator INFO: Inference done 144/250. Dataloading: 0.0014 s/iter. Inference: 0.0470 s/iter. Eval: 0.0276 s/iter. Total: 0.0761 s/iter. ETA=0:00:08
+[10/08 22:31:44] detectron2.evaluation.evaluator INFO: Inference done 210/250. Dataloading: 0.0016 s/iter. Inference: 0.0472 s/iter. Eval: 0.0275 s/iter. Total: 0.0763 s/iter. ETA=0:00:03
+[10/08 22:31:48] detectron2.evaluation.evaluator INFO: Total inference time: 0:00:19.091652 (0.077925 s / iter per device, on 2 devices)
+[10/08 22:31:48] detectron2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:11 (0.046721 s / iter per device, on 2 devices)
+[10/08 22:32:14] detectron2.engine.hooks WARNING: Given val metric relation_mean_recall/mean_recall does not seem to be computed/stored.Will not be checkpointing based on it.
+[10/08 22:53:15] detectron2.data.dataset_mapper INFO: [DatasetMapper] Augmentations used in inference: [ResizeShortestEdge(short_edge_length=(640, 640), max_size=640, sample_style='choice')]
+[10/08 22:53:15] detectron2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[10/08 22:53:15] detectron2.data.common INFO: Serialized dataset takes 0.86 MiB
+[10/08 22:53:15] detectron2.evaluation.evaluator INFO: Start inference on 250 batches
+[10/08 22:57:29] detectron2.engine.hooks INFO: Overall training speed: 41997 iterations in 7:35:18 (0.6505 s / it)
+[10/08 22:57:29] detectron2.engine.hooks INFO: Total training time: 8:02:33 (0:27:15 on hooks)

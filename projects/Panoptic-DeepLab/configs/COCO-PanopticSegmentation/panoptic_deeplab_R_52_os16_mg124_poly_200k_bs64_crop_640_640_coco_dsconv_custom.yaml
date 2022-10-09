@@ -6,6 +6,7 @@ MODEL:
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
   RESNETS:
+    OUT_FEATURES: ["res2", "res3", "res5"]
     DEPTH: 50
     RES5_MULTI_GRID: [1, 2, 4]
     STEM_TYPE: "deeplab"
@@ -22,13 +23,20 @@ MODEL:
     SIZE_DIVISIBILITY: 640
     USE_DEPTHWISE_SEPARABLE_CONV: True
     PREDICT_INSTANCES: True
+  PSG_RELATION_NET:
+    ENCODER_DEPTH: 2
+    TOTAL_RELATIONS: 56
+    TOTAL_CLASSES: 133
+    LOSS_WEIGHT: 0.5
 DATASETS:
   TRAIN: ("psg_train",)
   TEST: ("psg_val",)
 SOLVER:
-  BASE_LR: 0.0005
+  BASE_LR: 5e-4
   MAX_ITER: 50000
-  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 2
+  AMP:
+    ENABLED: False
 INPUT:
   FORMAT: "RGB"
   GAUSSIAN_SIGMA: 8
@@ -41,6 +49,6 @@ INPUT:
     ENABLED: True
     TYPE: "absolute"
     SIZE: (640, 640)
-OUTPUT_DIR: "./relations_output_seg_w_5_new"
+OUTPUT_DIR: "./relations_output_seg_transformer_resnet50"
 TEST:
-  EVAL_PERIOD: 2000
+  EVAL_PERIOD: 1000
