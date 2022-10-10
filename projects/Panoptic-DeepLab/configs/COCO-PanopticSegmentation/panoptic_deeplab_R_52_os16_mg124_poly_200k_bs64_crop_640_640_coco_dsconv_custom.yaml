@@ -1,13 +1,14 @@
 _BASE_: ../Cityscapes-PanopticSegmentation/Base-PanopticDeepLab-OS16.yaml
 MODEL:
-  WEIGHTS: "detectron2://DeepLab/R-52.pkl"
+  WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  # WEIGHTS: "./relations_output_seg_transformer_resnet101/model_best.pth"
   PIXEL_MEAN: [123.675, 116.280, 103.530]
   PIXEL_STD: [58.395, 57.120, 57.375]
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
   RESNETS:
     OUT_FEATURES: ["res2", "res3", "res5"]
-    DEPTH: 50
+    DEPTH: 101
     RES5_MULTI_GRID: [1, 2, 4]
     STEM_TYPE: "deeplab"
     STEM_OUT_CHANNELS: 128
@@ -24,19 +25,19 @@ MODEL:
     USE_DEPTHWISE_SEPARABLE_CONV: True
     PREDICT_INSTANCES: True
   PSG_RELATION_NET:
-    ENCODER_DEPTH: 2
+    ENCODER_DEPTH: 4
     TOTAL_RELATIONS: 56
     TOTAL_CLASSES: 133
-    LOSS_WEIGHT: 0.5
+    LOSS_WEIGHT: 1.0
+    ALPHA: 1.0
 DATASETS:
   TRAIN: ("psg_train",)
   TEST: ("psg_val",)
 SOLVER:
   BASE_LR: 5e-4
-  MAX_ITER: 50000
-  IMS_PER_BATCH: 2
-  AMP:
-    ENABLED: False
+  MAX_ITER: 20000
+  IMS_PER_BATCH: 8
+  CHECKPOINT_PERIOD: 1000
 INPUT:
   FORMAT: "RGB"
   GAUSSIAN_SIGMA: 8
@@ -49,6 +50,7 @@ INPUT:
     ENABLED: True
     TYPE: "absolute"
     SIZE: (640, 640)
-OUTPUT_DIR: "./relations_output_seg_transformer_resnet50"
+OUTPUT_DIR: "./relations_output_seg_transformer_resnet101_alpha5"
 TEST:
   EVAL_PERIOD: 1000
+  

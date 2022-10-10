@@ -131,13 +131,17 @@ MODEL:
     MIN_SIZE: 0
     NAME: RPN
   PSG_RELATION_NET:
-    CLS_LOSS_WEIGHT: 0.3
-    ENCODER_DEPTH: 2
-    IN_FEATURES:
-    - res2
+    ALPHA: 0.0
+    CLS_LOSS_WEIGHT: 1.0
+    EMBED_DIM: 256
+    ENCODER_DEPTH: 1
+    FEATURE_NAME_LIST:
     - res3
     - res5
-    LOSS_WEIGHT: 0.5
+    IN_FEATURES:
+    - res3
+    - res5
+    LOSS_WEIGHT: 1.0
     NAME: PSGRelationNet
     TOTAL_CLASSES: 133
     TOTAL_RELATIONS: 56
@@ -149,7 +153,7 @@ MODEL:
     - false
     - false
     - false
-    DEPTH: 50
+    DEPTH: 101
     NORM: FrozenBN
     NUM_GROUPS: 1
     OUT_FEATURES:
@@ -332,8 +336,8 @@ MODEL:
     - res2
     - res3
     USE_DEPTHWISE_SEPARABLE_CONV: true
-  WEIGHTS: detectron2://DeepLab/R-52.pkl
-OUTPUT_DIR: ./relations_output_seg_transformer_resnet50
+  WEIGHTS: ./relations_output_seg_transformer_resnet101/model_best.pth
+OUTPUT_DIR: ./relations_output_seg_transformer_resnet101
 SEED: -1
 SOLVER:
   AMP:
@@ -341,14 +345,14 @@ SOLVER:
   BASE_LR: 0.0005
   BASE_LR_END: 0.0
   BIAS_LR_FACTOR: 1.0
-  CHECKPOINT_PERIOD: 5000
+  CHECKPOINT_PERIOD: 1000
   CLIP_GRADIENTS:
     CLIP_TYPE: value
     CLIP_VALUE: 1.0
     ENABLED: false
     NORM_TYPE: 2.0
   GAMMA: 0.1
-  IMS_PER_BATCH: 2
+  IMS_PER_BATCH: 16
   LR_SCHEDULER_NAME: WarmupPolyLR
   MAX_ITER: 50000
   MOMENTUM: 0.9

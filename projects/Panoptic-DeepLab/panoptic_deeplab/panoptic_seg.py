@@ -432,8 +432,9 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         assert self.decoder_only
         y = super().layers(features)
         y = self.head(y)
-        y = self.predictor(y)
-        return y
+        predictions = self.predictor(y)
+        # return y, predictions
+        return predictions
 
     def losses(self, predictions, targets, weights=None):
         predictions = F.interpolate(
