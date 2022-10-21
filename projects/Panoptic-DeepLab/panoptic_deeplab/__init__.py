@@ -5,6 +5,9 @@ from .psg_relations import (
     PSG_RELATION_NET_REGISTRY,
     build_psg_relation_net,
     PSGRelationNet,
+    PSG_RELATION_ENCODER_REGISTRY,
+    build_psg_relation_encoder,
+    PSGRelationEncoder,
 )
 from .panoptic_seg import (
     PanopticDeepLab,

@@ -29,7 +29,7 @@ from detectron2.structures import BitMasks, ImageList, Instances
 from detectron2.utils.registry import Registry
 
 from .post_processing import get_panoptic_segmentation
-from .psg_relations import build_psg_relation_net
+from .psg_relations import build_psg_relation_encoder
 
 __all__ = ["PanopticDeepLab", "INS_EMBED_BRANCHES_REGISTRY", "build_ins_embed_branch"]
 
@@ -57,8 +57,8 @@ class PanopticDeepLab(nn.Module):
         self.backbone = build_backbone(cfg)
         self.sem_seg_head = build_sem_seg_head(cfg, self.backbone.output_shape())
         self.ins_embed_head = build_ins_embed_branch(cfg, self.backbone.output_shape())
-        self.psg_relation_net = build_psg_relation_net(
-            cfg, self.backbone.output_shape()
+        self.psg_relation_encoder = build_psg_relation_encoder(
+            cfg
         )
         # self.panoptic_relations_head = build_panoptic_relations_head(cfg, self.backbone.output_shape)
         self.register_buffer(
@@ -77,8 +77,8 @@ class PanopticDeepLab(nn.Module):
         self.use_depthwise_separable_conv = (
             cfg.MODEL.PANOPTIC_DEEPLAB.USE_DEPTHWISE_SEPARABLE_CONV
         )
-        self.relation_classes = cfg.MODEL.PSG_RELATION_NET.TOTAL_RELATIONS
-        self.total_classes = cfg.MODEL.PSG_RELATION_NET.TOTAL_CLASSES
+        self.relation_classes = cfg.MODEL.PSG_RELATION_ENCODER.TOTAL_RELATIONS
+        self.total_classes = cfg.MODEL.PSG_RELATION_ENCODER.TOTAL_CLASSES
 
         assert (
             cfg.MODEL.SEM_SEG_HEAD.USE_DEPTHWISE_SEPARABLE_CONV
@@ -147,33 +147,56 @@ class PanopticDeepLab(nn.Module):
         losses.update(sem_seg_losses)
 
         # psg relations
-        relation_list = []
-        if "relations" in batched_inputs[0]:
-            for x in batched_inputs:
-                rel_soft_label = torch.Tensor(self.relation_classes).fill_(0)
-                relations = [int(relation[-1]) for relation in x["relations"]]
-                rel_soft_label[relations] = 1
-                relation_list.append(rel_soft_label)
-            relations_targets = torch.stack(relation_list).to(self.device)
-        else:
-            relations_targets = None
 
-        cls_list = []
-        if "segments_info" in batched_inputs[0]:
-            for x in batched_inputs:
-                cls_soft_label = torch.Tensor(self.total_classes).fill_(0)
-                classes = [
-                    int(segment_info["category_id"])
-                    for segment_info in x["segments_info"]
-                ]
-                cls_soft_label[classes] = 1
-                cls_list.append(cls_soft_label)
-            semantic_cls = torch.stack(cls_list).to(self.device)
-        else:
-            semantic_cls = None
+        # relation_list = []
+        # if "relations" in batched_inputs[0]:
+        #     for x in batched_inputs:
+        #         rel_soft_label = torch.Tensor(self.relation_classes).fill_(0)
+        #         relations = [int(relation[-1]) for relation in x["relations"]]
+        #         rel_soft_label[relations] = 1    
+        #         relation_list.append(rel_soft_label)
+        #     relations_targets = torch.stack(relation_list).to(self.device)
+        # else:
+        #     relations_targets = None
 
-        panoptic_relations_results, panoptic_relations_losses = self.psg_relation_net(
-            features, relations_targets, semantic_cls
+        if "relations" in batched_inputs[0] and "segments_info" in batched_inputs[0]:
+            sub_soft_labels = np.zeros((len(batched_inputs), self.total_classes, self.relation_classes))
+            obj_soft_labels = np.zeros((len(batched_inputs), self.total_classes, self.relation_classes))
+            for item_index, x in enumerate(batched_inputs):
+                segments = x["segments_info"]
+                for relation in x["relations"]:
+                    if relation[2] <= 5:
+                        continue
+                    sub_index = segments[relation[0]]["category_id"]
+                    obj_index = segments[relation[1]]["category_id"]
+                    rel_index = relation[2]
+                    sub_soft_labels[item_index][sub_index][rel_index] = 1
+                    obj_soft_labels[item_index][obj_index][rel_index] = 1
+            sub_relation_targets = torch.from_numpy(sub_soft_labels).to(self.device)
+            obj_relation_targets = torch.from_numpy(obj_soft_labels).to(self.device)
+            # relation_targets = torch.mean(torch.cat([sub_relation_targets, obj_relation_targets], dim=0), dim=1)
+        else:
+            sub_relation_targets = None
+            obj_relation_targets = None
+        #     relation_targets = None
+
+
+        # cls_list = []
+        # if "segments_info" in batched_inputs[0]:
+        #     for x in batched_inputs:
+        #         cls_soft_label = torch.Tensor(self.total_classes).fill_(0)
+        #         classes = [
+        #             int(segment_info["category_id"])
+        #             for segment_info in x["segments_info"]
+        #         ]
+        #         cls_soft_label[classes] = 1
+        #         cls_list.append(cls_soft_label)
+        #     semantic_cls = torch.stack(cls_list).to(self.device)
+        # else:
+        #     semantic_cls = None
+
+        panoptic_relations_results, panoptic_relations_losses = self.psg_relation_encoder(
+            sem_seg_results, sub_relation_targets, obj_relation_targets
         )
         losses.update(panoptic_relations_losses)
 
@@ -421,7 +444,7 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         """
         y = self.layers(features)
         if self.training:
-            return None, self.losses(y, targets, weights)
+            return y, self.losses(y, targets, weights)
         else:
             y = F.interpolate(
                 y, scale_factor=self.common_stride, mode="bilinear", align_corners=False
@@ -432,18 +455,18 @@ class PanopticDeepLabSemSegHead(DeepLabV3PlusHead):
         assert self.decoder_only
         y = super().layers(features)
         y = self.head(y)
-        predictions = self.predictor(y)
+        y = self.predictor(y)
         # return y, predictions
-        return predictions
+        return y
 
-    def losses(self, predictions, targets, weights=None):
-        predictions = F.interpolate(
-            predictions,
+    def losses(self, y, targets, weights=None):
+        y = F.interpolate(
+            y,
             scale_factor=self.common_stride,
             mode="bilinear",
             align_corners=False,
         )
-        loss = self.loss(predictions, targets, weights)
+        loss = self.loss(y, targets, weights)
         losses = {"loss_sem_seg": loss * self.loss_weight}
         return losses
 
